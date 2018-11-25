@@ -123,15 +123,15 @@ void AppController::AppController_readIncomeCategory(string s)
 
 }
 void AppController::AppController_deleteExpenditureCategory(int index) {
-	categoryOfExpenditure->Category_delete(index);
 	string deleteCategory = categoryOfExpenditure->Category_whatIsCategory(index);
 	appFileReaderAndWriter->AppFileReaderAndWriter_write_deleteExpenditureCategory(deleteCategory);
+	categoryOfExpenditure->Category_delete(index);
 }
 
 void AppController::AppController_deleteIncomeCategory(int index) {
-	categoryOfIncome->Category_delete(index);
 	string deleteCategory = categoryOfIncome->Category_whatIsCategory(index);
 	appFileReaderAndWriter->AppFileReaderAndWriter_write_deleteIncomeCategory(deleteCategory);
+	categoryOfIncome->Category_delete(index);
 }
 
 
@@ -208,6 +208,7 @@ int AppController::AppController_run()
 	double _money;
 	string _category;
 	string _memo;
+	appFileReaderAndWriter->AppFileReaderAndWriter_readCateGory(this); // 추가
 	appFileReaderAndWriter->AppFileReaderAndWriter_read(this);
 	//appFileReaderAndWirter->AppFileReaderAndWriter_write();
 	appIO->AppIO_mainUI();
@@ -263,9 +264,9 @@ int AppController::AppController_run()
 					if (tmp == "+") {
 						//추가
 						AppController_showDefaultCategory(_isIncome);
-						cout << "추가할 카테고리를 입력하세요 : ";
+						cout << "추가할 카테고리를 입력하세요 : " << endl;;
 						cin >> tmp;
-						cout << tmp << "를 카테고리에 추가합니다.";
+						cout << tmp << "를 카테고리에 추가합니다." << endl;
 						if (_isIncome)
 							AppController_addIncomeCategory(tmp);
 						else
@@ -275,14 +276,23 @@ int AppController::AppController_run()
 					else if (tmp == "-") {
 						AppController_showDefaultCategory(_isIncome);
 						cout << "삭제할 카테고리를 입력하세요 : ";
-						cin >> tmp;
-						cout << tmp << "를 카테고리에 추가합니다.";
-						if (_isIncome)
-							AppController_addIncomeCategory(tmp);
-						else
-							AppController_addExpenditureCategory(tmp);
+						int deletedIndex;
+						cin >> deletedIndex;
+						
+						if (_isIncome) {
+							string s = categoryOfIncome->Category_whatIsCategory(deletedIndex);
+							cout << s << "를 카테고리에서 삭제 합니다." << endl;
+							AppController_deleteIncomeCategory(deletedIndex);
+						}
+						else {
+							string s = categoryOfExpenditure->Category_whatIsCategory(deletedIndex);
+							cout << s << "를 카테고리에서 삭제 합니다." << endl;
+							AppController_deleteExpenditureCategory(deletedIndex);
+						}
 						//삭제
 					}
+					appIO->AppIO_inputCategory();
+					cin >> tmp;
 				}
 
 				if (tmp == "1") {
@@ -298,6 +308,7 @@ int AppController::AppController_run()
 				else
 					_category = categoryOfExpenditure->Category_whatIsCategory(seletedIndex);
 
+				appIO->AppIO_inputMemo();
 				cin.ignore(); /*추가함*/
 				getline(cin, _memo); /*추가함*/
 
