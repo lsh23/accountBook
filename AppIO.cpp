@@ -23,7 +23,8 @@ void AppIO::AppIO_mainUI() {
 	cout << "|			1.가계부 쓰기				|" << endl;
 	cout << "|			2.가계부 보기				|" << endl;
 	cout << "|			3.소비패턴 파악				|" << endl;
-	cout << "|			4.종료					|" << endl;
+	cout << "|			4.현재잔고 파악				|" << endl;
+	cout << "|			5.종료					|" << endl;
 	cout << "|								|" << endl;
 	cout << "|								|" << endl;
 	cout << "|								|" << endl;
