@@ -36,23 +36,23 @@ void AppIO::AppIO_mainUI() {
 
 void AppIO::AppIO_inputDate()
 {
-	cout << "날짜를 입력하세요 (예시 2018 12 07 ) : " << endl;
+	cout << "\n날짜를 입력하세요 (예시 2018 12 07 ) : " ;
 }
 
 void AppIO::AppIO_inputExpenditureOrIncome()
 {
-	cout << "1.수입 / 2.지출을 선택하세요 : " << endl;
+	cout << "\n1.수입 / 2.지출을 선택하세요 : " ;
 }
 
 void AppIO::AppIO_inputBalance()
 {
-	cout << "금액을 입력하세요 : " << endl;
+	cout << "\n금액을 입력하세요 : " ;
 }
 
 void AppIO::AppIO_inputCategory()
 {	
-	cout << "1.카테고리 선택" << endl;
-	cout << "+.카테고리 추가 / -.카테고리 삭제" << endl;
+	cout << "카테고리 선택 / 추가 및 삭제" << " (+.카테고리 추가 / -.카테고리 삭제)" << endl;
+	cout << "카테고리를 선택하세요 : ";
 
 }
 
@@ -113,7 +113,7 @@ void AppIO::AppIO_printCategory(int i, string s)
 
 void AppIO::AppIO_inputMemo()
 {
-	cout << "메모할 내용을 입력 하세요 : " << endl;
+	cout << "\n메모할 내용을 입력 하세요 : ";
 }
 
 void AppIO::AppIO_printEnter() {
@@ -121,7 +121,7 @@ void AppIO::AppIO_printEnter() {
 }
 void AppIO::AppIO_inputCardOrCash()
 {
-	cout << "1.카드 / 2.현금 " <<endl;
+	cout << "\n1.카드 / 2.현금을 선택하세요 : ";
 }
 
 void AppIO::AppIO_programEixt()
