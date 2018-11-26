@@ -11,6 +11,8 @@
 #include"CategoryOfExpenditure.h"
 #include"CategoryOfIncome.h"
 #include"StatisticCalculator.h"
+#include"Cash.h"
+#include "Card.h"
 
 using namespace std;
 
@@ -40,6 +42,8 @@ class AppController {
 		StatisticCalculator* statisticCalculator;
 		Category* categoryOfExpenditure;
 		Category* categoryOfIncome;
+		Cash* cash;
+		Card* card;
 };
 
 

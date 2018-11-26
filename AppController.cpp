@@ -16,6 +16,8 @@ AppController::AppController()
 	statisticCalculator = new StatisticCalculator();
 	categoryOfExpenditure = new Category();
 	categoryOfIncome = new Category();
+	cash = new Cash();
+	card = new Card();
 }
 
 AppController::~AppController()
@@ -303,11 +305,20 @@ int AppController::AppController_run()
 				int seletedIndex;
 				cin >> seletedIndex;
 				// 선택한 카테고리 인덱스
-				if (_isIncome)
+				if (_isIncome) {
 					_category = categoryOfIncome->Category_whatIsCategory(seletedIndex);
-				else
+					if (_isCard)
+						card->Wallet_setincome(_money);
+					else
+						cash->Wallet_setincome(_money);
+				}
+				else {
 					_category = categoryOfExpenditure->Category_whatIsCategory(seletedIndex);
-
+					if (_isCard)
+						card->Wallet_setexpenditure(_money);
+					else
+						cash->Wallet_setexpenditure(_money);
+				}
 				appIO->AppIO_inputMemo();
 				cin.ignore(); /*추가함*/
 				getline(cin, _memo); /*추가함*/
@@ -388,6 +399,14 @@ int AppController::AppController_run()
 			//ㄱ.전체 통계하기 ㄴ.카테고리별 통계하기
 		}
 
+		else if (c == 4) {
+			//4.잔고확인
+			double balance;
+			balance = card->Wallet_getBalance() + cash->Wallet_getBalance();
+			cout << "총 잔고 : " << balance << endl;
+			cout << "카드 잔액 : " << cash->Wallet_getBalance() << endl;
+			cout << "현금 잔액 : " << card->Wallet_getBalance() << endl;
+		}
 		appIO->AppIO_mainUI();
 		cin >> c;
 	}
