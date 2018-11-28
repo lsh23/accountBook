@@ -41,7 +41,9 @@ void AppController::AppController_addAccountTable(int _year, int _month, int _da
 void AppController::AppController_showDefaultCategory(bool _isIncome)
 {
 	int numberOfLoop ;
+	cout << "\n";
 	if (_isIncome) {
+		cout << "<수입 카테고리 목록> ";
 		numberOfLoop = categoryOfIncome->Category_getNumberOfDefaultCategory();
 		for (int i = 0; i < numberOfLoop; i++) {
 			string nameOfCategory = categoryOfIncome->Category_whatIsCategory(i);
@@ -50,6 +52,7 @@ void AppController::AppController_showDefaultCategory(bool _isIncome)
 		appIO->AppIO_printEnter();
 	}
 	else {
+		cout << "<지출 카테고리 목록> ";
 		numberOfLoop = categoryOfExpenditure->Category_getNumberOfDefaultCategory();
 		for (int i = 0; i < numberOfLoop; i++) {
 			string nameOfCategory = categoryOfExpenditure->Category_whatIsCategory(i);
@@ -228,36 +231,95 @@ int AppController::AppController_run()
 				//ㄱ.날짜를 입력하세요 예 2018 03 14
 				// 토큰해서 _year , _month , _day 넣어주기
 
-				cin.ignore();
-				appIO->AppIO_inputDate();
-				string dateInput;
-				getline(cin, dateInput);
-				vector<string> tokens = split(dateInput, " ");
-				_year = stoi(tokens[0]);
-				_month = stoi(tokens[1]);
-				_day = stoi(tokens[2]);
+				while (1) { //11.23 수정
+					cin.ignore();
+					appIO->AppIO_inputDate();
+					string dateInput;
+					getline(cin, dateInput);
+					vector<string> tokens = split(dateInput, " ");
+					if ((stoi(tokens[1]) > 0) && (stoi(tokens[1]) < 13) && (stoi(tokens[2]) > 0) && (stoi(tokens[2]) < 32)) {
+						_year = stoi(tokens[0]);
+						_month = stoi(tokens[1]);
+						_day = stoi(tokens[2]);
+						break;
+					}
+					printf("error: input is incorrect\n!Press Enter!");
+				}
 
 				//ㄴ.1.수입/2.지출
-				appIO->AppIO_inputExpenditureOrIncome();
-				cin >> c;
-				if (c == 1)
-					_isIncome = true;
-				else
-					_isIncome = false;
+				while (1) { //11.23 수정
+					appIO->AppIO_inputExpenditureOrIncome();
+					cin >> c;
+					if (c == 1 || c == 2) {
+						if (c == 1) {
+							_isIncome = true;
+							break;
+						}
+						else {
+							_isIncome = false;
+							break;
+						}
+					}
+					printf("error: input is incorrect\n");
+				}
 				//ㄷ.1.카드/2.현금
-				appIO->AppIO_inputCardOrCash();
-				cin >> c;
-				if (c == 1)
-					_isCard = true;
-				else
-					_isCard = false;
+				while (1) { //11.23수정
+					appIO->AppIO_inputCardOrCash();
+					cin >> c;
+					if (c == 1 || c == 2) {
+						if (c == 1) {
+							_isCard = true;
+							break;
+						}
+						else {
+							_isCard = false;
+							break;
+						}
+					}
+					printf("error: input is incorrect\n");
+				}
 				//ㄹ.금액을 입력하세요 :
-				appIO->AppIO_inputBalance();
-				cin >> _money;
+				while (1) { //11.23 수정
+					appIO->AppIO_inputBalance();
+					cin >> _money;
+					if (_money > 0)
+						break;
+					printf("error: input is incorrect\n");
+				}
 				//Default 수입/지출 카테고리 ...
 
 				// 카테고리 추가 / 삭제
 				//ㅁ.카테고리를 설정하세요 :
+
+				//아래는 기존 예외처리 수정본에서 예외처리 필요
+				/*while (1) { 11.23 수정
+					appIO->AppIO_inputCategory();
+					string tmp;
+					cin >> tmp;
+					if (tmp == "+") {
+						//추가
+						break;
+					}
+					else if (tmp == "-") {
+						//삭제
+						break;
+					}
+					int tmpToInt = stoi(tmp); // 선택한 카테고리 인덱스
+					if (_isIncome) {
+						if (tmpToInt >= 0 && tmpToInt < categoryOfIncome->Category_getNumberOfDefaultCategory()) {
+							_category = categoryOfIncome->Category_whatIsCategory(tmpToInt);
+							break;
+						}
+					}
+					else {
+						if (tmpToInt >= 0 && tmpToInt < categoryOfExpenditure->Category_getNumberOfDefaultCategory()) {
+							_category = categoryOfExpenditure->Category_whatIsCategory(tmpToInt);
+							break;
+						}
+					}
+					printf("error: input is incorrect\n");
+				}*/
+
 				appIO->AppIO_inputCategory();
 				string tmp;
 				cin >> tmp;
@@ -319,6 +381,8 @@ int AppController::AppController_run()
 					else
 						cash->Wallet_setexpenditure(_money);
 				}
+
+
 				appIO->AppIO_inputMemo();
 				cin.ignore(); /*추가함*/
 				getline(cin, _memo); /*추가함*/
@@ -331,8 +395,13 @@ int AppController::AppController_run()
 
 																		 //수정** while문 추가
 				while (c != 4) {
-					cout << "1.메인화면으로 돌아가기 2.추가하기 3.삭제하기" << endl;
-					cin >> c;
+					while (1) { //11.23 수정
+						cout << "\n1.메인화면으로 돌아가기 2.추가하기 3.삭제하기" << endl;
+						cin >> c;
+						if (c > 0 && c <= 3)
+							break;
+						printf("error: input is incorrect\n");
+					}
 
 					if (c == 1) {
 						c = 10; //메인화면으로 돌아가기
@@ -407,8 +476,16 @@ int AppController::AppController_run()
 			cout << "카드 잔액 : " << cash->Wallet_getBalance() << endl;
 			cout << "현금 잔액 : " << card->Wallet_getBalance() << endl;
 		}
-		appIO->AppIO_mainUI();
-		cin >> c;
+
+		while (1) { //11.23 수정
+			appIO->AppIO_mainUI();
+			cout << "기능을 선택해주세요. : ";
+			cin >> c;
+			if (c > 0 && c < 5) {
+				break;
+			}
+			printf("error: input is incorrect\n");
+		}
 	}
 
 
@@ -481,8 +558,8 @@ void AppFileReaderAndWriter::AppFileReaderAndWriter_read(AppController* appcontr
 
 	if (in.is_open()) {
 		string line;
-		getline(in, line);
-		while (getline(in, line)) {
+		getline(in, line); //<<추가됨. 밑의 예외처리 test 필요.
+		/*while (getline(in, line)) {
 			vector<string> tokens = split(line, " ");
 			int year = stoi(tokens[0]);
 			int month = stoi(tokens[1]);
@@ -497,6 +574,38 @@ void AppFileReaderAndWriter::AppFileReaderAndWriter_read(AppController* appcontr
 			string category = tokens[6];
 			string memo = tokens[7];
 			appcontroller->AppController_addAccountTable(year, month, day, isIncome, isCard, money, category, memo);
+		}*/
+		int cnt = 1;
+		while (getline(in, line)) {
+			try {
+				vector<string> tokens = split(line, " ");
+				for (int i = 0; i < 3; i++)
+					if (!isNumber(tokens[i]))
+						throw cnt;
+				int year = stoi(tokens[0]);
+				int month = stoi(tokens[1]);
+				int day = stoi(tokens[2]);
+				for (int i = 3; i < 8; i++)
+					if (tokens[i] == "\0" && i != 5)
+						throw cnt;
+				bool isIncome = false;
+				if (tokens[3] == "수입")
+					isIncome = true;
+				bool isCard = false;
+				if (tokens[4] == "카드")
+					isCard = true;
+				if (!isNumber(tokens[5]))
+					throw cnt;
+				double money = (double)stoi(tokens[5]);
+				string category = tokens[6];
+				string memo = tokens[7];
+				appcontroller->AppController_addAccountTable(year, month, day, isIncome, isCard, money, category, memo);
+				cnt++;
+
+			}
+			catch (int e) {
+				cout << "error! 메모장에 데이터가 없는 줄 번호 : " << e << endl;
+			}
 		}
 	}
 	else {
