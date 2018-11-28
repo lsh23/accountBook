@@ -1,7 +1,0 @@
-CategoryOfIncome
-월급
-용돈
-상여
-학식
-머여
-테스트
