@@ -36,12 +36,6 @@
     <ClCompile Include="Category.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CategoryOfExpenditure.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CategoryOfIncome.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Day.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -87,12 +81,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Category.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CategoryOfExpenditure.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CategoryOfIncome.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Day.h">

@@ -150,8 +150,6 @@
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="Cash.cpp" />
     <ClCompile Include="Category.cpp" />
-    <ClCompile Include="CategoryOfExpenditure.cpp" />
-    <ClCompile Include="CategoryOfIncome.cpp" />
     <ClCompile Include="Day.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Month.cpp" />
@@ -168,8 +166,6 @@
     <ClInclude Include="Card.h" />
     <ClInclude Include="Cash.h" />
     <ClInclude Include="Category.h" />
-    <ClInclude Include="CategoryOfExpenditure.h" />
-    <ClInclude Include="CategoryOfIncome.h" />
     <ClInclude Include="Day.h" />
     <ClInclude Include="Month.h" />
     <ClInclude Include="StatisticCalculator.h" />
