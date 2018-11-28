@@ -8,12 +8,10 @@
 #include"AppIO.h"
 #include"AccontBook.h"
 #include"Wallet.h"
-#include"CategoryOfExpenditure.h"
-#include"CategoryOfIncome.h"
 #include"StatisticCalculator.h"
 #include"Cash.h"
-#include "Card.h"
-
+#include"Card.h"
+#include"Category.h"
 using namespace std;
 
 class AppFileReaderAndWriter;

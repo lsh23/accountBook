@@ -137,7 +137,7 @@ void AppIO::AppIO_printTotalExpenditure(int totalOfExpenditure, int toalOfCardEx
 
 void AppIO_printpercentage(int percentage) {
 	for (int i = 0; i < percentage/7; i++) {
-		cout << "¤±";
+		cout << "@";
 	}
 	
 	cout <<" " <<percentage << "%"<< endl;
