@@ -33,6 +33,7 @@ class AppIO {
 		void AppIO_printTotalExpenditure(int totalOfExpenditure, int toalOfCardExenditure, int totalOfCashExpenditure);
 		void AppIO_printDistributionOfIncomeOfCategory(string _category, int sumOfCategory, int percentage);
 		void AppIO_printDistributionOfIExpenditureOfCategory(string _category, int sumOfCategory, int percentage);
+		void AppIO_printGraph(string _category, int percentage);
 	private:
 };
 
