@@ -1,8 +1,0 @@
-CategoryOfExpenditure
-식비
-교통비
-마트/편의점
-생활용품
-패션/미용
-유흥비
-지출염
