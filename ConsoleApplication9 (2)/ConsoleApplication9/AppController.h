@@ -9,8 +9,6 @@
 #include"AccontBook.h"
 #include"Wallet.h"
 #include"StatisticCalculator.h"
-#include"Cash.h"
-#include"Card.h"
 #include"Category.h"
 using namespace std;
 
@@ -20,6 +18,7 @@ class AppController {
 		AppController();
 		~AppController();
 		void AppController_addAccountTable(int _year, int _month, int _day, bool _isIncome, bool _isCard, double _money, string _category, string _memo);
+		void AppController_readAccountTable(int _year, int _month, int _day, bool _isIncome, bool _isCard, double _money, string _category, string _memo);
 		void AppController_showDefaultCategory(bool _isIncome);
 		void AppController_printTableOfDay(int year, int month, int day);
 		void AppController_printTableOfDaySimple(int year, int month, int day);
@@ -31,17 +30,19 @@ class AppController {
 		void AppController_deleteExpenditureCategory(int index);
 		void AppController_deleteIncomeCategory(int index);
 		void Appcontroller_CalculateMonth(int year, int month);
+		void AppController_setWallet(int bal, int cash, int card);
+
 		int AppController_run();
 	private:
 		AppIO* appIO;
 		AppFileReaderAndWriter* appFileReaderAndWriter;
 		AccountBook* accountBook;
-		Wallet* wallet;
 		StatisticCalculator* statisticCalculator;
 		Category* categoryOfExpenditure;
 		Category* categoryOfIncome;
-		Cash* cash;
-		Card* card;
+		Wallet* wallet;
+		Wallet* cash;
+		Wallet* card;
 };
 
 
@@ -50,9 +51,11 @@ class AppController {
 class AppFileReaderAndWriter {
 public:
 	void AppFileReaderAndWriter_readCateGory(AppController * appcontroller);
+	void AppFileReaderAndWriter_readWallet(AppController * appcontroller);
 	void AppFileReaderAndWriter_read(AppController *appcontroller);
 	// 파일 읽어오기.
 	void AppFileReaderAndWriter_write(int _year, int _month, int _day, bool _isIncome, bool _isCard, double _money, string _category, string _memo);
+	void AppFileReaderAndWriter_writeWallet(bool _isIncome, bool _isCard, double _money);
 	void AppFileReaderAndWriter_write_deleteLine(int _year, int _month, int _day, bool _isIncome, bool _isCard, double _money, string _category, string _memo);
 	void AppFileReaderAndWriter_writeExpenditureCategory(string s);
 	void AppFileReaderAndWriter_writeIncomeCategory(string s);

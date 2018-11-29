@@ -12,18 +12,17 @@ bool isNumber(std::string token)
 	using namespace std;
 	return regex_match(token, regex(("((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?")));
 }
-
 AppController::AppController()
 {
 	appIO = new AppIO();
 	appFileReaderAndWriter = new AppFileReaderAndWriter();
 	accountBook = new AccountBook();
-	wallet = new Wallet();
 	statisticCalculator = new StatisticCalculator();
 	categoryOfExpenditure = new Category();
 	categoryOfIncome = new Category();
-	cash = new Cash();
-	card = new Card();
+	wallet = new Wallet();
+	cash = new Wallet();
+	card = new Wallet();
 }
 
 AppController::~AppController()
@@ -39,6 +38,28 @@ AppController::~AppController()
 }
 
 void AppController::AppController_addAccountTable(int _year, int _month, int _day, bool _isIncome, bool _isCard, double _money, string _category, string _memo)
+{
+	AccountTable newAccountTable = AccountTable(_isIncome, _isCard, _money, _category, _memo);
+	accountBook->AccountBook_addAccountTable(newAccountTable, _year, _month, _day);
+	if (_isIncome && _isCard) {
+		card->Wallet_income(_money);
+		wallet->Wallet_income(_money);
+	}
+	else if (_isIncome && !_isCard) {
+		cash->Wallet_income(_money);
+		wallet->Wallet_income(_money);
+	}
+	else if (!_isIncome && _isCard) {
+		card->Wallet_expenditure(_money);
+		wallet->Wallet_expenditure(_money);
+	}
+	else {
+		cash->Wallet_expenditure(_money);
+		wallet->Wallet_expenditure(_money);
+	}
+}
+
+void AppController::AppController_readAccountTable(int _year, int _month, int _day, bool _isIncome, bool _isCard, double _money, string _category, string _memo)
 {
 	AccountTable newAccountTable = AccountTable(_isIncome, _isCard, _money, _category, _memo);
 	accountBook->AccountBook_addAccountTable(newAccountTable, _year, _month, _day);
@@ -218,9 +239,14 @@ void AppController::Appcontroller_CalculateMonth(int year, int month) {
 		appIO->AppIO_printGraph(categoryOfExpenditure->Category_whatIsCategory(i), percentage);
 	}
 
+
 }
 
-
+void AppController::AppController_setWallet(int bal, int _cash ,int _card) {
+	wallet->Wallet_setBalance(bal);
+	cash->Wallet_setBalance(_cash);
+	card->Wallet_setBalance(_card);
+}
 
 int AppController::AppController_run()
 {
@@ -235,9 +261,11 @@ int AppController::AppController_run()
 	string _memo;
 	appFileReaderAndWriter->AppFileReaderAndWriter_readCateGory(this); // 추가
 	appFileReaderAndWriter->AppFileReaderAndWriter_read(this);
+	appFileReaderAndWriter->AppFileReaderAndWriter_readWallet(this);
 	//appFileReaderAndWirter->AppFileReaderAndWriter_write();
-	while (1) { //11.28 수정
+	while (1) {
 		appIO->AppIO_mainUI();
+		appIO->AppIO_ShowPresentBalance(wallet->Wallet_getBalance(),cash->Wallet_getBalance(),card->Wallet_getBalance());
 		cout << "기능을 선택해주세요. : ";
 		cin >> c;
 		if (c > 0 && c < 5) {
@@ -245,12 +273,12 @@ int AppController::AppController_run()
 		}
 		printf("error: input is incorrect\n");
 	}
-
-	while (c != 5)
+	while (c != 4)
 	{
 
 		if (c == 1)
 		{
+
 			//수정** while문 추가
 			while (c == 1) {
 				//1.쓰기
@@ -330,7 +358,7 @@ int AppController::AppController_run()
 					if (tmp == "+") {
 						//추가
 						AppController_showDefaultCategory(_isIncome);
-						cout << "추가할 카테고리를 입력하세요 : ";
+						cout << "추가할 카테고리를 입력하세요 : " << endl;;
 						cin >> tmp;
 						cout << tmp << "를 카테고리에 추가합니다." << endl;
 						if (_isIncome)
@@ -367,40 +395,32 @@ int AppController::AppController_run()
 				}
 
 				if (tmp == "1") {
+
 					string seletedIndex;
 					while (1) {
 						AppController_showDefaultCategory(_isIncome);
 						appIO->AppIO_selectCategory();
 						cin >> seletedIndex;
 						if (isNumber(seletedIndex)) {
-							if (_isIncome)
-								if (stoi(seletedIndex) < categoryOfIncome->Category_getNumberOfDefaultCategory())
+							if (_isIncome) {
+								if (stoi(seletedIndex) < categoryOfIncome->Category_getNumberOfDefaultCategory() && stoi(seletedIndex) >= 0)
 									break;
-								else if (!_isIncome)
-									if (stoi(seletedIndex) < categoryOfExpenditure->Category_getNumberOfDefaultCategory())
-										break;
+							}
+							else if (!_isIncome) {
+							if (stoi(seletedIndex) < categoryOfExpenditure->Category_getNumberOfDefaultCategory() && stoi(seletedIndex) >= 0)
+								break;
+						}
 						}
 						printf("error: input is incorrect\n");
 					}
 					// 선택한 카테고리 인덱스
 					if (_isIncome) {
 						_category = categoryOfIncome->Category_whatIsCategory(stoi(seletedIndex));
-						if (_isCard)
-							card->Wallet_setincome(_money);
-						else
-							cash->Wallet_setincome(_money);
 					}
 					else {
 						_category = categoryOfExpenditure->Category_whatIsCategory(stoi(seletedIndex));
-						if (_isCard)
-							card->Wallet_setexpenditure(_money);
-						else
-							cash->Wallet_setexpenditure(_money);
 					}
 				}
-
-
-
 
 
 				appIO->AppIO_inputMemo();
@@ -409,6 +429,7 @@ int AppController::AppController_run()
 
 				AppController_addAccountTable(_year, _month, _day, _isIncome, _isCard, _money, _category, _memo);
 				appFileReaderAndWriter->AppFileReaderAndWriter_write(_year, _month, _day, _isIncome, _isCard, _money, _category, _memo);
+				appFileReaderAndWriter->AppFileReaderAndWriter_writeWallet(_isIncome, _isCard, _money);
 				//추가 한 해당날 프린트
 				appIO->AppIO_printTableOfDay(_year, _month, _day);
 				AppController_printTableOfDaySimple(_year, _month, _day);//수입 / 지출 카드 / 현금 10000 카테고리 메모
@@ -488,17 +509,10 @@ int AppController::AppController_run()
 			//ㄱ.전체 통계하기 ㄴ.카테고리별 통계하기
 		}
 
-		else if (c == 4) {
-			//4.잔고확인
-			double balance;
-			balance = card->Wallet_getBalance() + cash->Wallet_getBalance();
-			cout << "총 잔고 : " << balance << endl;
-			cout << "카드 잔액 : " << cash->Wallet_getBalance() << endl;
-			cout << "현금 잔액 : " << card->Wallet_getBalance() << endl;
-		}
-
 		while (1) { //11.23 수정
 			appIO->AppIO_mainUI();
+			appIO->AppIO_ShowPresentBalance(wallet->Wallet_getBalance(), cash->Wallet_getBalance(), card->Wallet_getBalance());
+
 			cout << "기능을 선택해주세요. : ";
 			cin >> c;
 			if (c > 0 && c < 5) {
@@ -566,10 +580,42 @@ void AppFileReaderAndWriter::AppFileReaderAndWriter_readCateGory(AppController* 
 }
 
 
+void AppFileReaderAndWriter::AppFileReaderAndWriter_readWallet(AppController* appcontroller)
+{
+	ifstream in("Wallet.txt");
+	int cash;
+	int card;
+	string line;
+	getline(in, line);
+	if (in.is_open()) {
+		
+		getline(in, line);
+		if (line == "Cash") {
+			getline(in, line);
+			cash = stoi(line);
+		}
+		else {
+			//오류
+		}
+		getline(in, line);
+		if (line == "Card") {
+			getline(in, line);
+			card = stoi(line);
+		}
+		else {
+			//오류
+		}
 
-
-
-
+		appcontroller->AppController_setWallet(card + cash, cash, card);
+		while (getline(in, line)) {
+			//
+		}
+	}
+	else {
+		cout << " 파일을 찾을 수 없습니다.!" << endl;
+	}
+	in.close();
+}
 
 void AppFileReaderAndWriter::AppFileReaderAndWriter_read(AppController* appcontroller)
 {
@@ -578,7 +624,7 @@ void AppFileReaderAndWriter::AppFileReaderAndWriter_read(AppController* appcontr
 
 	if (in.is_open()) {
 		string line;
-		getline(in, line); //<<추가됨.
+		getline(in, line); 
 		int cnt = 1;
 		while (getline(in, line)) {
 			try {
@@ -603,7 +649,7 @@ void AppFileReaderAndWriter::AppFileReaderAndWriter_read(AppController* appcontr
 				double money = (double)stoi(tokens[5]);
 				string category = tokens[6];
 				string memo = tokens[7];
-				appcontroller->AppController_addAccountTable(year, month, day, isIncome, isCard, money, category, memo);
+				appcontroller->AppController_readAccountTable(year, month, day, isIncome, isCard, money, category, memo);
 				cnt++;
 
 			}
@@ -618,6 +664,9 @@ void AppFileReaderAndWriter::AppFileReaderAndWriter_read(AppController* appcontr
 
 	in.close();
 }
+
+
+
 
 
 void AppFileReaderAndWriter::AppFileReaderAndWriter_write(int _year, int _month, int _day, bool _isIncome, bool _isCard, double _money, string _category, string _memo)
@@ -640,7 +689,7 @@ void AppFileReaderAndWriter::AppFileReaderAndWriter_write(int _year, int _month,
 
 	string addedData = year + " " + month + " " + day + " " + isIncome + " " + isCard + " " + money + " " + _category + " " + _memo;
 
-	ofstream out("test.txt", ios::app);
+	ofstream out("data.txt", ios::app);
 
 	if (out.is_open()) {
 		out << endl << addedData;
@@ -649,6 +698,61 @@ void AppFileReaderAndWriter::AppFileReaderAndWriter_write(int _year, int _month,
 	out.close();
 
 }
+
+void AppFileReaderAndWriter::AppFileReaderAndWriter_writeWallet(bool _isIncome, bool _isCard, double _money)
+{
+
+	ofstream tmp;
+	tmp.open("temp2.txt");
+
+	ifstream in;
+	in.open("Wallet.txt");
+	
+	string editedLine;
+	
+	if (in.is_open()) {
+	
+		string line;
+		getline(in, line); //Wallet
+		tmp << "Wallet";
+		int newbal;
+		if (!_isCard) {
+				getline(in, line);
+				tmp << endl << line; //Cash
+				getline(in, line);//12345
+				newbal = stoi(line);
+				if (_isIncome)
+					tmp << endl << newbal + _money;
+				else
+					tmp << endl << newbal - _money;
+				while (getline(in, line))
+				{
+				tmp << endl << line;
+				}// 이거하면 새로운파일에 엔터하나 박힘 수정해야됨.
+		}
+		else {
+			while (getline(in, line))
+			{
+				if (line == "Card") break;
+				tmp << endl << line;
+			}
+			tmp << endl << line;
+			getline(in, line);
+			newbal = stoi(line);
+			if (_isIncome)
+				tmp << endl << newbal + _money;
+			else
+				tmp << endl << newbal - _money;
+		}
+	}
+
+	in.close();
+	tmp.close();
+	remove("Wallet.txt");
+	rename("temp2.txt", "Wallet.txt");
+
+}
+
 
 void AppFileReaderAndWriter::AppFileReaderAndWriter_write_deleteLine(int _year, int _month, int _day, bool _isIncome, bool _isCard, double _money, string _category, string _memo)
 {

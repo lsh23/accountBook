@@ -30,9 +30,13 @@ void AppIO::AppIO_mainUI() {
 	cout << "|								|" << endl;
 	cout << "|								|" << endl;
 	cout << " --------------------------------------------------------------" << endl;
-	cout << endl;
 }
 
+void AppIO::AppIO_ShowPresentBalance(int bal, int cash, int card) {
+	cout << "|\t 현재 총 잔고 : " << bal << "\t CASH : " << cash << "\t CARD : " << card <<"\t|" <<endl;
+	cout << " --------------------------------------------------------------" << endl;
+	cout << endl;
+}
 void AppIO::AppIO_inputDate()
 {
 	cout << "\n날짜를 입력하세요 (예시 2018 12 07 ) : ";
@@ -144,21 +148,18 @@ void AppIO_printpercentage(int percentage) {
 void AppIO::AppIO_printDistributionOfIncomeOfCategory(string _category, int sumOfCategory, int percentage) {
 	cout << _category << "의 총 수입 : " << sumOfCategory << endl;
 	
-	
 }
 void AppIO::AppIO_printDistributionOfIExpenditureOfCategory(string _category, int sumOfCategory, int percentage) {
 	cout << _category << "의 총 지출 : " << sumOfCategory << endl;
-	
 }
 
 void AppIO::AppIO_printGraph(string _category, int percentage) {
 	for (int i = 0; i < 100 / 7; i++) {
 		if (i < percentage / 7)
-			cout << "@";	
+			cout << "@";
 		else
 			cout << "0";
 	}
 	cout << " " << _category;
 	cout << " " << percentage << "%" << endl;
 }
-

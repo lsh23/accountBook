@@ -10,7 +10,9 @@ class AppIO {
 		AppIO();//Default 생성자 java 와 다른건 main에서 그냥 AppIO(); 하면 끝임;
 		~AppIO();//Default 소멸자 Delete x ; 와 같은거 c++에선 소멸자 호출시에도 function을 넣을 수 있음. 
 		// 소멸자에 동적할당했던거 delete 해주는거 넣으면 됨 . 또는 종료문 넣으면 될듯
-		void AppIO_mainUI(); //mainUI 출력
+		void AppIO_mainUI();
+		void AppIO_ShowPresentBalance(int bal, int cash, int card);
+		//mainUI 출력
 		void AppIO_inputDate(); //날짜를 입력하세요:
 		void AppIO_inputExpenditureOrIncome();// 지출인지 수입인지 입력하세요:
 		void AppIO_inputBalance();// 금액을 입력하세요.

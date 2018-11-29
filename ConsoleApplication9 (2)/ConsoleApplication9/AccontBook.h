@@ -17,7 +17,6 @@ class AccountBook {
 	private:
 		Calendar* calendar;
 
-		//통계칼큘 AppController로 넣을지 , 외부로 뺼지 외부로 빼면 
-		//accountBook 가져와야 되는데 그러면 Appcontroller를 알아야 되는데 어떻게 해결할지
+
 };
 #endif // !ACCOUNTBOOK_H
