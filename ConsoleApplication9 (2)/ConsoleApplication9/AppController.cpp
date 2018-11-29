@@ -7,6 +7,11 @@
 using namespace std;
 using namespace stdext;
 vector<string> split(string target, string delimiter);
+bool isNumber(std::string token)
+{
+	using namespace std;
+	return regex_match(token, regex(("((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?")));
+}
 
 AppController::AppController()
 {
@@ -194,11 +199,23 @@ void AppController::Appcontroller_CalculateMonth(int year, int month) {
 		appIO->AppIO_printDistributionOfIncomeOfCategory(categoryOfIncome->Category_whatIsCategory(i), sumOfCategoryOfIncome[i], percentage);
 	}
 
+	cout << "\n<Show Graph>" << endl; //11.28 수정
+	for (int i = 0; i < sumOfCategoryOfIncome.size(); i++) { //11.28 수정
+		int percentage = statisticCalculator->StactisticCalculator_percenteOfPartOfTotal(sumOfCategoryOfIncome[i], totalOfIncome);
+		appIO->AppIO_printGraph(categoryOfIncome->Category_whatIsCategory(i), percentage);
+	}
+
 	appIO->AppIO_printTotalExpenditure(totalOfExpenditure, totalOfCardExpendture, totalOfCashExpendture);
 	for (int i = 0; i < sumOfCategoryOfExpenditure.size(); i++) {
 		//cout << categoryOfExpenditure->Category_whatIsCategory(i) << "의 총 지출 : " << sumOfCategoryOfExpenditure[i] << endl;
 		int percentage = statisticCalculator->StactisticCalculator_percenteOfPartOfTotal(sumOfCategoryOfExpenditure[i], totalOfExpenditure);
 		appIO->AppIO_printDistributionOfIExpenditureOfCategory(categoryOfExpenditure->Category_whatIsCategory(i), sumOfCategoryOfExpenditure[i], percentage);
+	}
+
+	cout << "\n<Show Graph>" << endl; //11.28 수정
+	for (int i = 0; i < sumOfCategoryOfExpenditure.size(); i++) { //11.28 수정
+		int percentage = statisticCalculator->StactisticCalculator_percenteOfPartOfTotal(sumOfCategoryOfExpenditure[i], totalOfExpenditure);
+		appIO->AppIO_printGraph(categoryOfExpenditure->Category_whatIsCategory(i), percentage);
 	}
 
 }
@@ -219,9 +236,15 @@ int AppController::AppController_run()
 	appFileReaderAndWriter->AppFileReaderAndWriter_readCateGory(this); // 추가
 	appFileReaderAndWriter->AppFileReaderAndWriter_read(this);
 	//appFileReaderAndWirter->AppFileReaderAndWriter_write();
-	appIO->AppIO_mainUI();
-
-	cin >> c;
+	while (1) { //11.28 수정
+		appIO->AppIO_mainUI();
+		cout << "기능을 선택해주세요. : ";
+		cin >> c;
+		if (c > 0 && c < 5) {
+			break;
+		}
+		printf("error: input is incorrect\n");
+	}
 
 	while (c != 5)
 	{
@@ -294,44 +317,20 @@ int AppController::AppController_run()
 				// 카테고리 추가 / 삭제
 				//ㅁ.카테고리를 설정하세요 :
 
-				//아래는 기존 예외처리 수정본에서 예외처리 필요
-				/*while (1) { 11.23 수정
-				appIO->AppIO_inputCategory();
-				string tmp;
-				cin >> tmp;
-				if (tmp == "+") {
-				//추가
-				break;
+				string tmp; //11.28 예외처리 수정
+				while (1) {
+					appIO->AppIO_inputCategory();
+					cin >> tmp;
+					if (tmp == "1" || tmp == "+" || tmp == "-")
+						break;
+					printf("error: input is incorrect\n");
 				}
-				else if (tmp == "-") {
-				//삭제
-				break;
-				}
-				int tmpToInt = stoi(tmp); // 선택한 카테고리 인덱스
-				if (_isIncome) {
-				if (tmpToInt >= 0 && tmpToInt < categoryOfIncome->Category_getNumberOfDefaultCategory()) {
-				_category = categoryOfIncome->Category_whatIsCategory(tmpToInt);
-				break;
-				}
-				}
-				else {
-				if (tmpToInt >= 0 && tmpToInt < categoryOfExpenditure->Category_getNumberOfDefaultCategory()) {
-				_category = categoryOfExpenditure->Category_whatIsCategory(tmpToInt);
-				break;
-				}
-				}
-				printf("error: input is incorrect\n");
-				}*/
-
-				appIO->AppIO_inputCategory();
-				string tmp;
-				cin >> tmp;
 
 				while (tmp != "1") {
 					if (tmp == "+") {
 						//추가
 						AppController_showDefaultCategory(_isIncome);
-						cout << "추가할 카테고리를 입력하세요 : " << endl;;
+						cout << "추가할 카테고리를 입력하세요 : ";
 						cin >> tmp;
 						cout << tmp << "를 카테고리에 추가합니다." << endl;
 						if (_isIncome)
@@ -358,32 +357,50 @@ int AppController::AppController_run()
 						}
 						//삭제
 					}
-					appIO->AppIO_inputCategory();
-					cin >> tmp;
+					while (1) {
+						appIO->AppIO_inputCategory();
+						cin >> tmp;
+						if (tmp == "1" || tmp == "+" || tmp == "-")
+							break;
+						printf("error: input is incorrect\n");
+					}
 				}
 
 				if (tmp == "1") {
-					AppController_showDefaultCategory(_isIncome);
-					appIO->AppIO_selectCategory();
+					string seletedIndex;
+					while (1) {
+						AppController_showDefaultCategory(_isIncome);
+						appIO->AppIO_selectCategory();
+						cin >> seletedIndex;
+						if (isNumber(seletedIndex)) {
+							if (_isIncome)
+								if (stoi(seletedIndex) < categoryOfIncome->Category_getNumberOfDefaultCategory())
+									break;
+								else if (!_isIncome)
+									if (stoi(seletedIndex) < categoryOfExpenditure->Category_getNumberOfDefaultCategory())
+										break;
+						}
+						printf("error: input is incorrect\n");
+					}
+					// 선택한 카테고리 인덱스
+					if (_isIncome) {
+						_category = categoryOfIncome->Category_whatIsCategory(stoi(seletedIndex));
+						if (_isCard)
+							card->Wallet_setincome(_money);
+						else
+							cash->Wallet_setincome(_money);
+					}
+					else {
+						_category = categoryOfExpenditure->Category_whatIsCategory(stoi(seletedIndex));
+						if (_isCard)
+							card->Wallet_setexpenditure(_money);
+						else
+							cash->Wallet_setexpenditure(_money);
+					}
+				}
 
-				}
-				int seletedIndex;
-				cin >> seletedIndex;
-				// 선택한 카테고리 인덱스
-				if (_isIncome) {
-					_category = categoryOfIncome->Category_whatIsCategory(seletedIndex);
-					if (_isCard)
-						card->Wallet_setincome(_money);
-					else
-						cash->Wallet_setincome(_money);
-				}
-				else {
-					_category = categoryOfExpenditure->Category_whatIsCategory(seletedIndex);
-					if (_isCard)
-						card->Wallet_setexpenditure(_money);
-					else
-						cash->Wallet_setexpenditure(_money);
-				}
+
+
 
 
 				appIO->AppIO_inputMemo();
@@ -447,7 +464,7 @@ int AppController::AppController_run()
 				appIO->AppIO_printTableOfDay(_year, _month, _day);
 				AppController_printTableOfDay(_year, _month, _day);//수입 / 지출 카드 / 현금 10000 카테고리 메모
 				while (c != 3) {
-					cout << "1.메인화면으로 돌아가기 2.다른날짜 보기" << endl;
+					cout << "\n1.메인화면으로 돌아가기 2.다른날짜 보기" << endl;
 					cin >> c;
 
 					if (c == 1) {
@@ -550,11 +567,7 @@ void AppFileReaderAndWriter::AppFileReaderAndWriter_readCateGory(AppController* 
 
 
 
-bool isNumber(std::string token)
-{
-	using namespace std;
-	return regex_match(token, regex(("((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?")));
-}
+
 
 
 
@@ -565,23 +578,7 @@ void AppFileReaderAndWriter::AppFileReaderAndWriter_read(AppController* appcontr
 
 	if (in.is_open()) {
 		string line;
-		getline(in, line); //<<추가됨. 밑의 예외처리 test 필요.
-						   /*while (getline(in, line)) {
-						   vector<string> tokens = split(line, " ");
-						   int year = stoi(tokens[0]);
-						   int month = stoi(tokens[1]);
-						   int day = stoi(tokens[2]);
-						   bool isIncome = false;
-						   if (tokens[3] == "수입")
-						   isIncome = true;
-						   bool isCard = false;
-						   if (tokens[4] == "카드")
-						   isCard = true;
-						   double money = (double)stoi(tokens[5]);
-						   string category = tokens[6];
-						   string memo = tokens[7];
-						   appcontroller->AppController_addAccountTable(year, month, day, isIncome, isCard, money, category, memo);
-						   }*/
+		getline(in, line); //<<추가됨.
 		int cnt = 1;
 		while (getline(in, line)) {
 			try {
