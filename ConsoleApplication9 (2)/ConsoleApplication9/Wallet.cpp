@@ -4,41 +4,22 @@ Wallet::Wallet()
 {
 }
 
-Wallet::Wallet(double bal)
-{
-	Wallet_setBalance(bal);
-}
-
-double Wallet::Wallet_getBalance()
-{
-	
-	return balance;
-}
-
-void Wallet::Wallet_setBalance(double bal)
+Wallet::Wallet(int bal)
 {
 	balance = bal;
 }
 
-void Wallet::Wallet_setexpenditure(double expendi)
-{
-	expenditure = expendi;
-	balance = Wallet_getBalance() - expenditure;
+int Wallet::Wallet_getBalance() {
+	return balance;
+}
+void Wallet::Wallet_setBalance(int bal) {
+	balance = bal;
 }
 
-double Wallet::Wallet_getexpenditure()
-{
-	return expenditure;
-}
+void Wallet::Wallet_expenditure(int expendi) {
+	balance = balance - expendi;
+	}
 
-void Wallet::Wallet_setincome(double inco)
-{
-	income = inco;
-	balance = Wallet_getBalance() + income;
+void Wallet::Wallet_income(int inco) {
+	balance = balance + inco;
 }
-
-double Wallet::Wallet_getincome()
-{
-	return income;
-}
-

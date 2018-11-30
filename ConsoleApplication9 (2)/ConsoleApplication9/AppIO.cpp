@@ -30,9 +30,13 @@ void AppIO::AppIO_mainUI() {
 	cout << "|								|" << endl;
 	cout << "|								|" << endl;
 	cout << " --------------------------------------------------------------" << endl;
-	cout << endl;
 }
 
+void AppIO::AppIO_ShowPresentBalance(int bal, int cash, int card) {
+	cout << "|\t 현재 총 잔고 : " << bal << "\t CASH : " << cash << "\t CARD : " << card <<"\t|" <<endl;
+	cout << " --------------------------------------------------------------" << endl;
+	cout << endl;
+}
 void AppIO::AppIO_inputDate()
 {
 	cout << "\n날짜를 입력하세요 (예시 2018 12 07 ) : ";
@@ -50,13 +54,11 @@ void AppIO::AppIO_inputBalance()
 
 void AppIO::AppIO_inputCategory()
 {	
-	cout << "1.카테고리 선택" << endl;
-	cout << "+.카테고리 추가 / -.카테고리 삭제" << endl;
-
+	cout << "\n1.카테고리 선택 / +.카테고리 추가 / -.카테고리 삭제" << endl;
 }
 
 void AppIO::AppIO_selectCategory() {
-	cout << "카테고리를 선택하세요 : " << endl;
+	cout << "카테고리를 선택하세요 : ";
 }
 
 void AppIO::AppIO_print(string s)
@@ -129,10 +131,10 @@ void AppIO::AppIO_programEixt()
 }
 /*추가한것들 아래 4개*/
 void AppIO::AppIO_prnitTotalIncome(int totalOfIncome, int totalOfCardIncome, int totalOfCashIncome) {
-	cout << "총수입 : " << totalOfIncome << " 총카드수입 : " << totalOfCardIncome << " 총현금수입 :  " << totalOfCashIncome << endl;
+	cout << "\n총수입 : " << totalOfIncome << " 총카드수입 : " << totalOfCardIncome << " 총현금수입 :  " << totalOfCashIncome << endl;
 }
 void AppIO::AppIO_printTotalExpenditure(int totalOfExpenditure, int toalOfCardExpenditure, int totalOfCashExpenditure) {
-	cout << "총지출 : " << totalOfExpenditure << " 총카드지출 : " << toalOfCardExpenditure << " 총현금지출 : " << totalOfCashExpenditure << " " << endl;
+	cout << "\n총지출 : " << totalOfExpenditure << " 총카드지출 : " << toalOfCardExpenditure << " 총현금지출 : " << totalOfCashExpenditure << " " << endl;
 }
 
 void AppIO_printpercentage(int percentage) {
@@ -145,11 +147,19 @@ void AppIO_printpercentage(int percentage) {
 
 void AppIO::AppIO_printDistributionOfIncomeOfCategory(string _category, int sumOfCategory, int percentage) {
 	cout << _category << "의 총 수입 : " << sumOfCategory << endl;
-	AppIO_printpercentage(percentage);
 	
 }
 void AppIO::AppIO_printDistributionOfIExpenditureOfCategory(string _category, int sumOfCategory, int percentage) {
 	cout << _category << "의 총 지출 : " << sumOfCategory << endl;
-	AppIO_printpercentage(percentage);
 }
 
+void AppIO::AppIO_printGraph(string _category, int percentage) {
+	for (int i = 0; i < 100 / 7; i++) {
+		if (i < percentage / 7)
+			cout << "@";
+		else
+			cout << "0";
+	}
+	cout << " " << _category;
+	cout << " " << percentage << "%" << endl;
+}
